@@ -4,6 +4,15 @@
 #define SIZE 8
 #define COLOR_BG COLOR_BLACK
 
+#define MOVE(coord, delta, limit)                             \
+    do                                                        \
+    {                                                         \
+        if ((delta) < 0 && game.pos.coord > 0)                \
+            game.pos.coord--;                                 \
+        else if ((delta) > 0 && game.pos.coord < (limit) - 1) \
+            game.pos.coord++;                                 \
+    } while (0)
+
 enum player
 {
     PLAYER_NONE = 0,
@@ -22,7 +31,7 @@ typedef struct pos pos_t;
 struct game
 {
     player_t curr;
-    player_t board[SIZE][SIZE];
+    player_t hits[SIZE][SIZE];
     pos_t pos;
     pos_t recent;
 };
@@ -35,9 +44,9 @@ typedef struct game game_t;
  * @param p2 Second position.
  * @returns TRUE if the positions are equal, FALSE otherwise.
  */
-static bool pos_eq(pos_t p1, pos_t p2)
+static bool pos_eq(const pos_t *p1, const pos_t *p2)
 {
-    return p1.x == p2.x && p1.y == p2.y;
+    return p1->x == p2->x && p1->y == p2->y;
 }
 
 /**
@@ -45,22 +54,34 @@ static bool pos_eq(pos_t p1, pos_t p2)
  *
  * @param game The current state of the game.
  */
-void render(const game_t *game)
+static void render(const game_t *game)
 {
+    const char symbols[] = {'-', 'x', 'o'};
+    const char letters[SIZE] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+
     clear();
+
+    // print column letters
+    move(0, 2);
+    for (int x = 0; x < SIZE; ++x)
+    {
+        printw("%c ", letters[x]);
+    }
+
     for (int y = 0; y < SIZE; ++y)
+    {
+        move(y + 1, 0);
+        printw("%d ", y + 1);
         for (int x = 0; x < SIZE; ++x)
         {
-            const char symbols[] = {'-', 'x', 'o'};
             pos_t curr = {x, y};
-            int color = pos_eq(game->pos, curr) ? 1 : pos_eq(game->recent, curr) ? 2
-                                                                                 : 0;
-            addch(symbols[game->board[y][x]] | COLOR_PAIR(color));
+            int color = pos_eq(&game->pos, &curr) ? 1 : pos_eq(&game->recent, &curr) ? 2
+                                                                                     : 0;
+            addch(symbols[game->hits[y][x]] | COLOR_PAIR(color));
             addch(' ');
-            if (x == SIZE - 1)
-                move(y + 1, 0);
         }
-    refresh();
+        refresh();
+    }
 }
 
 int main()
@@ -80,15 +101,10 @@ int main()
 
     for (int y = 0; y < SIZE; ++y)
         for (int x = 0; x < SIZE; ++x)
-            game.board[y][x] = PLAYER_NONE;
+            game.hits[y][x] = PLAYER_NONE;
     game.curr = PLAYER_ONE;
     game.pos = (pos_t){0, 0};
     game.recent = (pos_t){-1, -1};
-
-    // alias pointers
-    pos_t *pos = &game.pos;
-    pos_t *recent = &game.recent;
-    player_t(*board)[SIZE] = game.board;
 
     // game loop
     int ch;
@@ -96,37 +112,26 @@ int main()
     {
         render(&game);
         ch = getch();
+        if (ch == 'q')
+            break;
         switch (ch)
         {
-        case 'q':
-            break;
-        case KEY_UP:
-            if (game.pos.y > 0)
-                game.pos.y--;
-            break;
-        case KEY_DOWN:
-            if (game.pos.y < SIZE - 1)
-                game.pos.y++;
-            break;
-        case KEY_LEFT:
-            if (game.pos.x > 0)
-                game.pos.x--;
-            break;
-        case KEY_RIGHT:
-            if (game.pos.x < SIZE - 1)
-                game.pos.x++;
-            break;
+            // clang-format off
+        case KEY_UP:    case 'w':  MOVE(y, -1, SIZE); break;
+        case KEY_DOWN:  case 's':  MOVE(y, 1, SIZE);  break;
+        case KEY_LEFT:  case 'a':  MOVE(x, -1, SIZE); break;
+        case KEY_RIGHT: case 'd':  MOVE(x, 1, SIZE);  break;
+            // clang-format on
+
         case ' ':
-            if (game.board[game.pos.y][game.pos.x] == PLAYER_NONE)
+            if (game.hits[game.pos.y][game.pos.x] == PLAYER_NONE)
             {
-                game.board[game.pos.y][game.pos.x] = game.curr;
+                game.hits[game.pos.y][game.pos.x] = game.curr;
                 game.recent = game.pos;
                 game.curr = (game.curr == PLAYER_ONE) ? PLAYER_TWO : PLAYER_ONE;
             }
             break;
         }
-        if (ch == 'q')
-            break;
     }
 
     // teardown
