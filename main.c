@@ -3,11 +3,13 @@
 
 #define SIZE 8
 
-enum tile
+enum player
 {
-    TILE_EMPTY
+    PLAYER_NONE,
+    PLAYER_ONE,
+    PLAYER_TWO
 };
-typedef enum tile tile_t;
+typedef enum player player_t;
 
 struct pos
 {
@@ -16,14 +18,26 @@ struct pos
 };
 typedef struct pos pos_t;
 
-void render(tile_t board[SIZE][SIZE], pos_t pos)
+void render(player_t board[SIZE][SIZE], pos_t pos)
 {
     clear();
     for (int i = 0; i < SIZE; ++i)
         for (int j = 0; j < SIZE; ++j)
         {
+            char ch;
+            switch (board[i][j]) {
+                case PLAYER_NONE:
+                    ch = '-';
+                    break;
+                case PLAYER_ONE:
+                    ch = 'x';
+                    break;
+                case PLAYER_TWO:
+                    ch = 'o';
+                    break;
+            }
             int color = (pos.x == j && pos.y == i) ? 1 : 0;
-            addch('-' | COLOR_PAIR(color));
+            addch(ch | COLOR_PAIR(color));
             addch(' ');
             if (j == SIZE - 1)
                 move(i + 1, 0);
@@ -43,7 +57,8 @@ int main()
     }
     keypad(stdscr, TRUE);
 
-    tile_t board[SIZE][SIZE] = {0};
+    player_t board[SIZE][SIZE] = {PLAYER_NONE};
+    player_t current = PLAYER_ONE;
     pos_t pos = {0, 0};
 
     // game loop
@@ -62,6 +77,11 @@ int main()
             pos.x--;
         if (ch == KEY_RIGHT && pos.x < SIZE - 1)
             pos.x++;
+        if (ch == ' ' && board[pos.y][pos.x] == PLAYER_NONE)
+        {
+            board[pos.y][pos.x] = current;
+            current = (current == PLAYER_ONE) ? PLAYER_TWO : PLAYER_ONE;
+        }
     }
 
     // teardown
