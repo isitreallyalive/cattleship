@@ -4,7 +4,7 @@ src := main.c
 out := cattleship
 
 default:
-	$(CC) $(src) -o $(out)
+	$(CC) $(src) -lncurses -o $(out)
 
 run: default
 	./$(out)
