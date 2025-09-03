@@ -1,9 +1,17 @@
 #pragma once
 #include "util/pos.h"
 
-#define BOARD_SIZE 8
+#define CELL_COUNT 8
+#define BOARD_SIZE (CELL_COUNT * 2 + 1)
 
-typedef bool board_t[BOARD_SIZE][BOARD_SIZE];
+typedef bool board_t[CELL_COUNT][CELL_COUNT];
+
+typedef struct game
+{
+    pos_t cur; // the position of the cursor
+    board_t p1_shot; // where has player 1 shot?
+    board_t p2_shot; // where has player 2 shot?
+} game_t;
 
 /**
  * Initialise the game board by setting all cells to false.
@@ -12,9 +20,9 @@ typedef bool board_t[BOARD_SIZE][BOARD_SIZE];
  */
 void board_init(board_t board);
 
-typedef struct game
-{
-    pos_t cur; // the position of the cursor
-    board_t p1_shot; // where has player 1 shot?
-    board_t p2_shot; // where has player 2 shot?
-} game_t;
+/**
+ * Draw a board to the screen.
+ * 
+ * @param board The game board to draw.
+ */
+void board_draw(board_t board);

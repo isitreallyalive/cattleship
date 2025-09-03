@@ -12,6 +12,17 @@ int main() {
     board_init(state.p1_shot);
     board_init(state.p2_shot);
 
+    // game loop
+    int ch;
+    while (true) {
+        clear();
+        board_draw(state.p1_shot);
+        refresh();
+
+        ch = getch();
+        if (ch == 'q') break;
+    }
+
     // teardown
     endwin();
     return 0;
