@@ -17,9 +17,9 @@ typedef struct game
 /**
  * Initialise the game board by setting all cells to false.
  *
- * @param board The game board to initialise.
+ * @param board A pointer to the game board to initialise.
  */
-void board_init(board_t board);
+void board_init(board_t *board);
 
 /**
  * Draw a board to the screen.
@@ -28,7 +28,7 @@ void board_init(board_t board);
  * @param cur The current cursor position.
  * @param recent The most recent shot position.
  */
-void board_draw(board_t board, vec_t cur, vec_t recent);
+void board_draw(const board_t board, const vec_t cur, const vec_t recent);
 
 /**
  * Mark a position on the board as shot.
@@ -37,4 +37,4 @@ void board_draw(board_t board, vec_t cur, vec_t recent);
  * @param recent Pointer to the most recent shot position.
  * @param pos The position to mark as shot.
  */
-void board_shoot(board_t *board, vec_t *recent, vec_t pos);
+void board_shoot(board_t *board, vec_t *recent, const vec_t pos);

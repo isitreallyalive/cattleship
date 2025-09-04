@@ -9,5 +9,8 @@ default:
 run: default
 	./$(out)
 
+format:
+	clang-format -i $(src)
+
 clean:
 	rm -f $(out)
