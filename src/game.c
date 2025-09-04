@@ -12,7 +12,7 @@ void board_init(board_t board)
     }
 }
 
-void board_draw(board_t board, vec_t cur)
+void board_draw(board_t board, vec_t cur, vec_t recent)
 {
     // letters across the x-axis
     move(0, 2);
@@ -32,9 +32,19 @@ void board_draw(board_t board, vec_t cur)
         {
             char ch = board[y][x] ? 'x' : '-';
             vec_t pos = vec_init(x, y);
-            bool pair = vec_eq(&cur, &pos);
+            bool is_cursor = vec_eq(&cur, &pos);
+            bool is_recent = vec_eq(&recent, &pos);
+            int pair = (is_cursor && is_recent) ? 3 : is_cursor ? 1
+                                                  : is_recent   ? 2
+                                                                : 0;
             addch(ch | COLOR_PAIR(pair));
             addch(' ');
         }
     }
+}
+
+void board_shoot(board_t *board, vec_t *recent, vec_t pos)
+{
+    (*board)[pos.y][pos.x] = true;
+    *recent = pos;
 }

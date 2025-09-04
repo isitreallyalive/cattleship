@@ -1,5 +1,5 @@
 #include "vec.h"
-#include "../game.h";
+#include "../game.h"
 
 static inline int clamp(int val, int min, int max)
 {

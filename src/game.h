@@ -9,6 +9,7 @@ typedef bool board_t[CELL_COUNT][CELL_COUNT];
 typedef struct game
 {
     vec_t cur;       // the position of the cursor
+    vec_t recent;    // the most recent position that was shot at
     board_t p1_shot; // where has player 1 shot?
     board_t p2_shot; // where has player 2 shot?
 } game_t;
@@ -25,5 +26,15 @@ void board_init(board_t board);
  *
  * @param board The game board to draw.
  * @param cur The current cursor position.
+ * @param recent The most recent shot position.
  */
-void board_draw(board_t board, vec_t cur);
+void board_draw(board_t board, vec_t cur, vec_t recent);
+
+/**
+ * Mark a position on the board as shot.
+ *
+ * @param board Pointer to the game board.
+ * @param recent Pointer to the most recent shot position.
+ * @param pos The position to mark as shot.
+ */
+void board_shoot(board_t *board, vec_t *recent, vec_t pos);

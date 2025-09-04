@@ -13,8 +13,10 @@ int main()
     if (has_colors())
     {
         start_color();
-        init_pair(0, COLOR_FG, COLOR_BG);
-        init_pair(1, COLOR_BG, COLOR_FG);
+        init_pair(0, COLOR_FG, COLOR_BG);  // default
+        init_pair(1, COLOR_BG, COLOR_FG);  // cursor
+        init_pair(2, COLOR_RED, COLOR_BG); // recent
+        init_pair(3, COLOR_RED, COLOR_FG); // cursor + recent
     }
 
     // initialise game state
@@ -29,7 +31,7 @@ int main()
     {
         // draw ui
         clear();
-        board_draw(state.p1_shot, state.cur);
+        board_draw(state.p1_shot, state.cur, state.recent);
         refresh();
 
         // handle controls
@@ -39,10 +41,12 @@ int main()
         switch (ch)
         {
             // clang-format off
-            case KEY_UP: case 'w': vec_add(&state.cur, 0, -1); break;
-            case KEY_DOWN: case 's': vec_add(&state.cur, 0, 1); break;
-            case KEY_LEFT: case 'a': vec_add(&state.cur, -1, 0); break;
-            case KEY_RIGHT: case 'd': vec_add(&state.cur, 1, 0); break;
+            // movement
+            case KEY_UP:    case 'w': vec_add(&state.cur, 0, -1); break;
+            case KEY_DOWN:  case 's': vec_add(&state.cur, 0, 1);  break;
+            case KEY_LEFT:  case 'a': vec_add(&state.cur, -1, 0); break;
+            case KEY_RIGHT: case 'd': vec_add(&state.cur, 1, 0);  break;
+            case ' ':                 board_shoot(&state.p1_shot, &state.recent, state.cur); break;
             // clang-format on
         }
     }
