@@ -1,5 +1,5 @@
 #include "vec.h"
-#include "../game.h"
+#include "board.h"
 
 static inline int clamp(int val, int min, int max) {
 	if (val < min)
@@ -9,7 +9,7 @@ static inline int clamp(int val, int min, int max) {
 	return val;
 }
 
-vec_t vec_init(const int x, const int y) { return (vec_t){x, y}; }
+const vec_t vec_init(const int x, const int y) { return (vec_t){x, y}; }
 
 void vec_add(vec_t *p, const int dx, const int dy) {
 	p->x = clamp(p->x + dx, 0, CELL_COUNT - 1);

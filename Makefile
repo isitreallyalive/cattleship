@@ -1,10 +1,11 @@
 MAKEFLAGS += --silent
+CFLAGS += -I./src/struct -I./src/util
 
 src := $(shell find src -name '*.c')
 out := cattleship
 
 default:
-	$(CC) $(src) -lncurses -o $(out)
+	$(CC) $(CFLAGS) $(src) -lncurses -o $(out)
 
 run: default
 	./$(out)

@@ -1,4 +1,5 @@
-#include "game.h"
+#include "struct/board.h"
+#include "struct/player.h"
 #include <ncurses.h>
 
 #define COLOR_BG COLOR_BLACK
@@ -19,17 +20,16 @@ int main() {
 	}
 
 	// initialise game state
-	game_t state;
-	state.cur = vec_init(0, 0);
-	board_init(&state.p1_shot);
-	board_init(&state.p2_shot);
+	player_t p1 = player_init();
+	player_t p2 = player_init();
 
 	// game loop
 	int ch;
+	player_t *player = &p1;
 	while (true) {
 		// draw ui
 		clear();
-		board_draw(state.p1_shot, state.cur, state.recent);
+		board_draw(player->shots, player->cur);
 		refresh();
 
 		// handle controls
@@ -38,13 +38,16 @@ int main() {
 			break;
 		switch (ch) {
 			// clang-format off
-      // movement
-      case KEY_UP:    case 'w': vec_add(&state.cur, 0, -1); break;
-      case KEY_DOWN:  case 's': vec_add(&state.cur, 0, 1);  break;
-      case KEY_LEFT:  case 'a': vec_add(&state.cur, -1, 0); break;
-      case KEY_RIGHT: case 'd': vec_add(&state.cur, 1, 0);  break;
-      case ' ':                 board_shoot(&state.p1_shot, &state.recent, state.cur); break;
+		// movement
+		case KEY_UP:    case 'w': vec_add(&player->cur, 0, -1);                              break;
+		case KEY_DOWN:  case 's': vec_add(&player->cur, 0, 1);                               break;
+		case KEY_LEFT:  case 'a': vec_add(&player->cur, -1, 0);                              break;
+		case KEY_RIGHT: case 'd': vec_add(&player->cur, 1, 0);                               break;
 			// clang-format on
+		case ' ': {
+			board_shoot(player->cur, &player->shots);
+			player = (player == &p1) ? &p2 : &p1; // switch player
+		}
 		}
 	}
 

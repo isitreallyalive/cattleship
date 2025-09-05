@@ -1,6 +1,6 @@
-#include "game.h"
+#include "board.h"
+#include "player.h"
 #include <ncurses.h>
-#include <string.h>
 
 // clang-format off
 #define CELL_HIT   'x'
@@ -8,9 +8,7 @@
 #define CELL_EMPTY '.'
 // clang-format on
 
-void board_init(board_t *board) { memset(board, false, sizeof(board_t)); }
-
-void board_draw(const board_t board, const vec_t cur, const vec_t recent) {
+void board_draw(const board_t board, const vec_t cur) {
 	// letters across the x-axis
 	move(0, 2);
 	for (int x = 0; x < CELL_COUNT; ++x) {
@@ -30,7 +28,7 @@ void board_draw(const board_t board, const vec_t cur, const vec_t recent) {
 
 			vec_t pos = vec_init(x, y);
 			bool is_cursor = vec_eq(&cur, &pos);
-			bool is_recent = vec_eq(&recent, &pos);
+			bool is_recent = false; // todo: reimplement
 			int pair = (is_cursor && is_recent) ? 3 : is_cursor ? 1 : is_recent ? 2 : 0;
 
 			int attrs = COLOR_PAIR(pair);
@@ -43,7 +41,6 @@ void board_draw(const board_t board, const vec_t cur, const vec_t recent) {
 	}
 }
 
-void board_shoot(board_t *board, vec_t *recent, const vec_t pos) {
-	(*board)[pos.y][pos.x] = true;
-	*recent = pos;
+void board_shoot(vec_t pos, board_t *shots) {
+	(*shots)[pos.y][pos.x] = true;
 }
