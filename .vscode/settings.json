@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "vec.h": "c",
-        "board.h": "c",
-        "player.h": "c",
-        "ncurses.h": "c"
-    }
-}

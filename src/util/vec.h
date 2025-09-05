@@ -7,14 +7,8 @@ typedef struct vec
     int y;
 } vec_t;
 
-/**
- * Create a new vector from the provided components.
- *
- * @param x The x component.
- * @param y The y component.
- * @returns The vector corresponding to the provided components.
- */
-vec_t vec_init(const int x, const int y);
+#define VEC(x, y) ((vec_t){(x), (y)})
+extern const vec_t VEC_ZERO;
 
 /**
  * Add the provided scalars to the components of the vector,
