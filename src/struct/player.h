@@ -1,9 +1,9 @@
 #pragma once
-#include "board.h"
+#include "ship.h"
 #include "vec.h"
 
 typedef struct player {
-    board_t shots;
+    ships_t ships;
     vec_t cur;
 } player_t;
 

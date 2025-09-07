@@ -1,9 +1,12 @@
 #include "player.h"
+#include "ship.h"
 #include <string.h>
 
 player_t player_init() {
   player_t p;
-  memset(&p.shots, false, sizeof(board_t)); // init board
-  p.cur = VEC_ZERO;                         // init cursor
+  for (int s = 0; s < SHIP_COUNT; ++s) {
+    ship_place(&p.ships, s); // init ships
+  }
+  p.cur = VEC_ZERO; // init cursor
   return p;
 }

@@ -1,11 +1,21 @@
-#include "struct/board.h"
-#include "struct/player.h"
+#include "const.h"
+#include "player.h"
 #include <ncurses.h>
+#include <time.h>
 
 #define COLOR_BG COLOR_BLACK
 #define COLOR_FG COLOR_WHITE
 
+static inline int clamp(int val) {
+  if (val < 0)
+    return 0;
+  if (val >= BOARD_SIZE)
+    return BOARD_SIZE - 1;
+  return val;
+}
+
 int main() {
+  srand(time(NULL));    // random seed
   initscr();            // initialise ncurses
   curs_set(0);          // hide cursor
   keypad(stdscr, TRUE); // enable arrow keys
@@ -27,7 +37,7 @@ int main() {
   while (true) {
     // draw ui
     clear();
-    board_draw(player->shots, player->cur);
+    // TODO: draw
     refresh();
 
     // handle controls
@@ -37,13 +47,12 @@ int main() {
     switch (ch) {
       // clang-format off
 	// movement
-	case KEY_UP:    case 'w': vec_add(&player->cur, 0, -1); break;                              break;
-	case KEY_DOWN:  case 's': vec_add(&player->cur, 0, 1);  break;                               break;
-	case KEY_LEFT:  case 'a': vec_add(&player->cur, -1, 0); break;                              break;
-	case KEY_RIGHT: case 'd': vec_add(&player->cur, 1, 0);  break;                               break;
+	case KEY_UP:    case 'w': player->cur.y = clamp(player->cur.y - 1); break;
+	case KEY_DOWN:  case 's': player->cur.y = clamp(player->cur.y + 1); break;
+	case KEY_LEFT:  case 'a': player->cur.x = clamp(player->cur.x - 1); break;
+	case KEY_RIGHT: case 'd': player->cur.x = clamp(player->cur.x + 1); break;
       // clang-format on
     case ' ': {
-      board_shoot(player->cur, &player->shots);
       player = (player == &p1) ? &p2 : &p1; // switch player
       break;
     }
